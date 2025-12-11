@@ -42,6 +42,7 @@ const AddTirePage: React.FC = () => {
       <div className="p-6 flex-1 overflow-y-auto space-y-6">
         
         <div className="space-y-5">
+          {/* ID Interno */}
           <div className="relative group">
             <input
               type="text"
@@ -56,55 +57,64 @@ const AddTirePage: React.FC = () => {
             <div className="text-right text-[10px] text-gray-400 mt-1 font-bold">{(tire.internalId?.length || 0)}/10</div>
           </div>
 
+          {/* Marca de Llanta (DataList) */}
           <div className="relative group">
-             <label className="absolute -top-2.5 left-3 bg-[#f4f7f4] px-1.5 text-xs font-bold text-gray-500 group-focus-within:text-[#1b4332] z-10">
-              Marca de Llanta *
-            </label>
-             <select 
+             <input 
+               list="brands-list"
+               type="text"
                value={tire.brand || ''}
                onChange={(e) => setTire({...tire, brand: e.target.value})}
-               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-700 bg-white focus:ring-2 focus:ring-[#1b4332] outline-none appearance-none font-medium"
-             >
-               <option value="">Seleccionar marca...</option>
+               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-700 bg-white focus:ring-2 focus:ring-[#1b4332] focus:border-transparent outline-none font-medium placeholder-transparent"
+               placeholder="Buscar marca..."
+             />
+             <datalist id="brands-list">
                {brands.map(b => (
-                   <option key={b.id} value={b.name}>{b.name}</option>
+                   <option key={b.id} value={b.name} />
                ))}
-             </select>
-             <div className="absolute right-4 top-4 pointer-events-none text-gray-400">▼</div>
+             </datalist>
+             <label className="absolute -top-2.5 left-3 bg-[#f4f7f4] px-1.5 text-xs font-bold text-gray-500 group-focus-within:text-[#1b4332] transition-colors pointer-events-none">
+              Marca de Llanta *
+            </label>
           </div>
 
+          {/* Diseño de Llanta (DataList) */}
           <div className="relative group">
-             <label className="absolute -top-2.5 left-3 bg-[#f4f7f4] px-1.5 text-xs font-bold text-gray-500 group-focus-within:text-[#1b4332] z-10">
-              Diseño de Llanta *
-            </label>
-             <select 
+             <input 
+               list="designs-list"
+               type="text"
                value={tire.design || ''}
                onChange={(e) => setTire({...tire, design: e.target.value})}
-               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-700 bg-white focus:ring-2 focus:ring-[#1b4332] outline-none appearance-none font-medium"
-             >
-               <option value="">Seleccionar diseño...</option>
+               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-700 bg-white focus:ring-2 focus:ring-[#1b4332] focus:border-transparent outline-none font-medium placeholder-transparent"
+               placeholder="Buscar diseño..."
+             />
+             <datalist id="designs-list">
                {designs.map(d => (
-                   <option key={d.id} value={d.name}>{d.name}</option>
+                   <option key={d.id} value={d.name} />
                ))}
-             </select>
-             <div className="absolute right-4 top-4 pointer-events-none text-gray-400">▼</div>
+             </datalist>
+             <label className="absolute -top-2.5 left-3 bg-[#f4f7f4] px-1.5 text-xs font-bold text-gray-500 group-focus-within:text-[#1b4332] transition-colors pointer-events-none">
+              Diseño de Llanta *
+            </label>
           </div>
 
+          {/* Dimensión de Llanta (DataList) */}
           <div className="relative group">
-             <label className="absolute -top-2.5 left-3 bg-[#f4f7f4] px-1.5 text-xs font-bold text-gray-500 group-focus-within:text-[#1b4332] z-10">
-              Dimensión de Llanta *
-            </label>
-             <select 
+             <input 
+               list="dimensions-list"
+               type="text"
                value={tire.dimension || ''}
                onChange={(e) => setTire({...tire, dimension: e.target.value})}
-               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-700 bg-white focus:ring-2 focus:ring-[#1b4332] outline-none appearance-none font-medium"
-             >
-               <option value="">Seleccionar dimensión...</option>
+               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-700 bg-white focus:ring-2 focus:ring-[#1b4332] focus:border-transparent outline-none font-medium placeholder-transparent"
+               placeholder="Buscar dimensión..."
+             />
+             <datalist id="dimensions-list">
                {dimensions.map(d => (
-                   <option key={d.id} value={d.size}>{d.size}</option>
+                   <option key={d.id} value={d.size} />
                ))}
-             </select>
-             <div className="absolute right-4 top-4 pointer-events-none text-gray-400">▼</div>
+             </datalist>
+             <label className="absolute -top-2.5 left-3 bg-[#f4f7f4] px-1.5 text-xs font-bold text-gray-500 group-focus-within:text-[#1b4332] transition-colors pointer-events-none">
+              Dimensión de Llanta *
+            </label>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

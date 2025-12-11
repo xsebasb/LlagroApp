@@ -39,6 +39,7 @@ export interface InspectionData {
   depthInt: number;
   observations: string;
   tireId?: string;
+  images?: string[];
 }
 
 export interface Report {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { RefreshCw, ArrowRightLeft, HelpCircle, Save } from 'lucide-react';
+import { RefreshCw, ArrowRightLeft, HelpCircle, Save, Camera, X } from 'lucide-react';
 import { InspectionData, Vehicle } from '../types';
 import { MockDatabase } from '../services/mockDatabase';
 import TruckVisualizer from '../components/TruckVisualizer';
@@ -9,6 +9,8 @@ import TruckVisualizer from '../components/TruckVisualizer';
 const InspectionPage: React.FC = () => {
   const { vehicleId } = useParams();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [currentPos, setCurrentPos] = useState(1);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [formData, setFormData] = useState<InspectionData>({
@@ -18,7 +20,8 @@ const InspectionPage: React.FC = () => {
     depthExt: 13,
     depthCent: 12,
     depthInt: 13,
-    observations: 'ok'
+    observations: 'ok',
+    images: []
   });
 
   const [hasTire, setHasTire] = useState(false);
@@ -33,14 +36,48 @@ const InspectionPage: React.FC = () => {
     }
   }, [vehicleId]);
 
+  // Handle position change
+  useEffect(() => {
+    // Reset form for new position (Simulation)
+    setFormData(prev => ({
+        ...prev, 
+        position: currentPos, 
+        images: [], // Clear images for new position
+        observations: '' 
+    }));
+  }, [currentPos]);
+
   const handleNext = () => {
       if (vehicle && currentPos < vehicle.tireCount) {
         setCurrentPos(p => p + 1);
         setHasTire(true); 
       } else {
-        alert("Inspección guardada (Simulación)");
+        alert("Inspección guardada con evidencias (Simulación)");
         navigate(-1);
       }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          images: [...(prev.images || []), reader.result as string]
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input so same file can be selected again if needed
+    if (event.target) event.target.value = '';
+  };
+
+  const removeImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index)
+    }));
   };
 
   if (!vehicle) {
@@ -179,6 +216,46 @@ const InspectionPage: React.FC = () => {
                     <DepthInput label="CEN" value={formData.depthCent} onChange={v => setFormData({...formData, depthCent: v})} />
                     <DepthInput label="INT" value={formData.depthInt} onChange={v => setFormData({...formData, depthInt: v})} />
                 </div>
+              </div>
+
+              {/* Image Upload Section */}
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Evidencias Fotográficas</p>
+                    <button 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-[#1b4332] text-xs font-bold flex items-center gap-1 hover:bg-[#e8f5e9] px-2 py-1 rounded transition-colors"
+                    >
+                        <Camera size={14} /> Agregar
+                    </button>
+                    <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                    />
+                </div>
+
+                {(!formData.images || formData.images.length === 0) ? (
+                    <div className="text-center py-4 border-2 border-dashed border-gray-200 rounded-lg text-gray-400 text-xs">
+                        <p>No hay imágenes adjuntas</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                        {formData.images.map((img, idx) => (
+                            <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+                                <img src={img} alt="Evidencia" className="w-full h-full object-cover" />
+                                <button 
+                                    onClick={() => removeImage(idx)}
+                                    className="absolute top-1 right-1 bg-red-500 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform scale-90 hover:scale-100"
+                                >
+                                    <X size={12} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
               </div>
 
               <div className="relative pt-2 group">

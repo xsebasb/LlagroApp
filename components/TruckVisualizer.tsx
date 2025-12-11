@@ -1,10 +1,9 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, Environment, Html, RoundedBox } from '@react-three/drei';
+import { OrbitControls, ContactShadows, Html, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Fix for missing types in JSX.IntrinsicElements for React Three Fiber
-// This handles cases where @react-three/fiber types aren't properly picking up the global JSX namespace augmentation
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -15,6 +14,9 @@ declare global {
       boxGeometry: any;
       ambientLight: any;
       spotLight: any;
+      directionalLight: any;
+      hemisphereLight: any;
+      pointLight: any;
     }
   }
 }
@@ -202,9 +204,17 @@ const TruckVisualizer: React.FC<TruckVisualizerProps> = (props) => {
   return (
     <div className="w-full h-64 bg-gradient-to-b from-gray-50 to-gray-200 rounded-xl overflow-hidden border border-gray-200 relative">
       <Canvas shadows camera={{ position: [4, 4, 6], fov: 45 }}>
-        <ambientLight intensity={0.7} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-        <Environment preset="city" />
+        {/* Replacement for Environment: Robust Lighting Setup */}
+        <hemisphereLight intensity={0.5} groundColor="#404040" />
+        <ambientLight intensity={0.5} />
+        <directionalLight 
+            position={[5, 10, 5]} 
+            intensity={1.5} 
+            castShadow 
+            shadow-mapSize-width={1024} 
+            shadow-mapSize-height={1024}
+        />
+        <pointLight position={[-10, 0, -10]} intensity={0.5} color="#e0f2fe" />
         
         <TruckScene {...props} />
         
